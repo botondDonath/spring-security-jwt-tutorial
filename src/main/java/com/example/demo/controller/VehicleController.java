@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/vehicles")
@@ -39,8 +40,9 @@ public class VehicleController {
 
     @GetMapping("/{id}")
     public ResponseEntity get(@PathVariable("id") Long id) {
-        if (vehicles.findById(id).isPresent()) {
-            return ResponseEntity.ok(vehicles.findById(id));
+        Optional<Vehicle> vehicle = vehicles.findById(id);
+        if (vehicle.isPresent()) {
+            return ResponseEntity.ok(vehicle.get());
         }
         return new ResponseEntity<>("Vehicle not found", HttpStatus.NOT_FOUND);
     }
@@ -48,8 +50,9 @@ public class VehicleController {
 
     @PutMapping("/{id}")
     public ResponseEntity update(@PathVariable("id") Long id, @RequestBody VehicleForm form) {
-        if (vehicles.findById(id).isPresent()) {
-            Vehicle existed = vehicles.findById(id).get();
+        Optional<Vehicle> vehicle = vehicles.findById(id);
+        if (vehicle.isPresent()) {
+            Vehicle existed = vehicle.get();
             existed.setName(form.getName());
             vehicles.save(existed);
             return ResponseEntity.noContent().build();
@@ -59,12 +62,11 @@ public class VehicleController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity delete(@PathVariable("id") Long id) {
-        if (vehicles.findById(id).isPresent()) {
-            Vehicle existed = vehicles.findById(id).get();
-            vehicles.delete(existed);
+        Optional<Vehicle> vehicle = vehicles.findById(id);
+        if (vehicle.isPresent()) {
+            vehicles.delete(vehicle.get());
             return ResponseEntity.noContent().build();
         }
         return new ResponseEntity<>("Vehicle not found", HttpStatus.NOT_FOUND);
-
     }
 }
