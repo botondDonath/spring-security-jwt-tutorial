@@ -15,19 +15,19 @@ import java.util.Optional;
 @RequestMapping("/vehicles")
 public class VehicleController {
 
-    private VehicleRepository vehicles;
+    private final VehicleRepository vehicles;
 
     public VehicleController(VehicleRepository vehicles) {
         this.vehicles = vehicles;
     }
 
     @GetMapping("")
-    public ResponseEntity all() {
+    public ResponseEntity<?> all() {
         return ResponseEntity.ok(this.vehicles.findAll());
     }
 
     @PostMapping("")
-    public ResponseEntity save(@RequestBody VehicleForm form, HttpServletRequest request) {
+    public ResponseEntity<?> save(@RequestBody VehicleForm form, HttpServletRequest request) {
         Vehicle saved = vehicles.save(Vehicle.builder().name(form.getName()).build());
         return ResponseEntity.created(
             ServletUriComponentsBuilder
@@ -39,7 +39,7 @@ public class VehicleController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity get(@PathVariable("id") Long id) {
+    public ResponseEntity<?> get(@PathVariable("id") Long id) {
         Optional<Vehicle> vehicle = vehicles.findById(id);
         if (vehicle.isPresent()) {
             return ResponseEntity.ok(vehicle.get());
@@ -49,7 +49,7 @@ public class VehicleController {
 
 
     @PutMapping("/{id}")
-    public ResponseEntity update(@PathVariable("id") Long id, @RequestBody VehicleForm form) {
+    public ResponseEntity<?> update(@PathVariable("id") Long id, @RequestBody VehicleForm form) {
         Optional<Vehicle> vehicle = vehicles.findById(id);
         if (vehicle.isPresent()) {
             Vehicle existed = vehicle.get();
@@ -61,7 +61,7 @@ public class VehicleController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity delete(@PathVariable("id") Long id) {
+    public ResponseEntity<?> delete(@PathVariable("id") Long id) {
         Optional<Vehicle> vehicle = vehicles.findById(id);
         if (vehicle.isPresent()) {
             vehicles.delete(vehicle.get());
